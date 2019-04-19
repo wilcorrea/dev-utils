@@ -44,6 +44,8 @@ function commit()
 # commit command body instructions
 function __commitPerform
 {
+  source ${SCRIPT_PATH}/.env
+
   MODIFIED=$(git status --short)
   if [[ ! ${MODIFIED} ]]; then
     red "## No changes available"
@@ -219,20 +221,25 @@ function __commitPerform
   yellow "# [enter the ID of issue]"
   _yellow "# [if empty will use the branch name as reference in commit] $ "
 
+  # concat related with a text to be human readable
+  COMMIT_RELATED="> current branch: ${COMMIT_BRANCH}"
+
   # read commit related info
-  read COMMIT_RELATED
+  read READ_COMMIT_RELATED
   # if commit related was entered...
-  if [[ ${COMMIT_RELATED} ]]; then
+  if [[ ${READ_COMMIT_RELATED} ]]; then
     # convert related to uppercase
-    COMMIT_RELATED=$(echo ${COMMIT_RELATED} | tr a-z A-Z)
+    READ_COMMIT_RELATED=$(echo ${READ_COMMIT_RELATED} | tr a-z A-Z)
     # use related as commit reference
-    COMMIT_REFERENCE="#${COMMIT_RELATED}"
-    # concat related with a text to be human readable
-    COMMIT_RELATED="> issue link #${COMMIT_RELATED}"
-  # else use the branch name as related
-  else
-    # concat related with a text to be human readable
-    COMMIT_RELATED="> current branch ${COMMIT_BRANCH}"
+    COMMIT_REFERENCE="#${READ_COMMIT_RELATED}"
+
+    COMMIT_RELATED_ISSUE_LINK="#${COMMIT_RELATED}"
+    ## get issue tracker from .env
+    if [[ ${ISSUE_TRACKER} ]]; then
+      # concat related with a text to be human readable
+      COMMIT_RELATED_ISSUE_LINK="${ISSUE_TRACKER}/${READ_COMMIT_RELATED}"
+    fi
+    COMMIT_RELATED="> current branch: ${COMMIT_BRANCH}, issue link: ${COMMIT_RELATED_ISSUE_LINK}"
   fi
 
   COMMIT_MESSAGE="[${COMMIT_REFERENCE}/${COMMIT_TYPE}] ${COMMIT_MESSAGE}"
