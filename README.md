@@ -41,4 +41,10 @@ This can be useful to store the credentials of repository.
 
 The command pull has the same features than `push` command.
 
+## Personalization
+
+Create a copy of .env.example named .env in the project root folder and customize the properties as shown in the examples
+
+----
+
 shared with ❤ by [@wilcorrea](https://github.com/wilcorrea)
