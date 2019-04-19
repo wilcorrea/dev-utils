@@ -20,6 +20,8 @@ function commit()
 {
   __presentation "commit"
 
+  __commitPerform
+
   if [[ ! -d .git ]]; then
     red "## This folder is not a working tree"
     return
@@ -37,7 +39,11 @@ function commit()
       return
     fi
   fi
+}
 
+# commit command body instructions
+function __commitPerform
+{
   MODIFIED=$(git status --short)
   if [[ ! ${MODIFIED} ]]; then
     red "## No changes available"
@@ -243,7 +249,7 @@ EOF
     _yellow "# Do you want to commit again? [y/n] $ "
     read -n 1 READ_DO_AGAIN
     if [[ ${READ_DO_AGAIN} = "y" ]]; then
-      commit
+      __commitPerform
     fi
     echo ""
   fi
