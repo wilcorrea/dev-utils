@@ -310,3 +310,10 @@ function push
   git config credential.helper store
   git push
 }
+
+# push the changes to remote repo
+function pull
+{
+  git config credential.helper store
+  git pull
+}
