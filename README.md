@@ -40,3 +40,5 @@ This can be useful to store the credentials of repository.
 #### pull
 
 The command pull has the same features than `push` command.
+
+shared with ❤ by [@wilcorrea](https://github.com/wilcorrea)
