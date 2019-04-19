@@ -36,3 +36,7 @@ Use the log command to get a `git log` with a preconfigured format and the optio
 
 Using the push command will be executed `git config credential.helper store` before `git push`.
 This can be useful to store the credentials of repository.
+
+#### pull
+
+The command pull has the same features than `push` command.
