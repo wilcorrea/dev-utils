@@ -64,7 +64,7 @@ function commit()
 
     yellow "# Enter the file number in the list to toggle selection"
     yellow "# [separate with ',' when more than 9 options]"
-    _yellow "# [type enter with empty to finish] $ "
+    _yellow "# [type enter with empty to go ahead] $ "
 
     # if there is more than 10 files will be necessary type enter
     if (( ${#COMMIT_FILES_OPTIONS[@]} > 10 )); then
@@ -302,4 +302,11 @@ function log
   --graph \
   --grep="${1}"
   #  --invert-grep \
+}
+
+# push the changes to remote repo
+function push
+{
+  git config credential.helper store
+  git push
 }
