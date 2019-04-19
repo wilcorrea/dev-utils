@@ -44,7 +44,11 @@ function commit()
 # commit command body instructions
 function __commitPerform
 {
-  source ${SCRIPT_PATH}/.env
+  if [[ -f ${SCRIPT_PATH}/.env ]]; then
+    source ${SCRIPT_PATH}/.env
+  else
+    ISSUE_TRACKER=""
+  fi
 
   MODIFIED=$(git status --short)
   if [[ ! ${MODIFIED} ]]; then
