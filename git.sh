@@ -44,10 +44,13 @@ function commit()
 # commit command body instructions
 function __commitPerform
 {
+  ISSUE_TRACKER=""
+  BRANCH_AS_ISSUE_ID="0"
   if [[ -f ${SCRIPT_PATH}/.env ]]; then
     source ${SCRIPT_PATH}/.env
-  else
-    ISSUE_TRACKER=""
+  fi
+  if [[ -f .du ]]; then
+    source .du
   fi
 
   MODIFIED=$(git status --short)
@@ -221,15 +224,25 @@ function __commitPerform
 
   # init commit reference with the branch name
   COMMIT_REFERENCE=$(echo $(basename ${COMMIT_BRANCH}) | tr a-z A-Z)
-  yellow "# Related issue"
-  yellow "# [enter the ID of issue]"
-  _yellow "# [if empty will use the branch name as reference in commit] $ "
 
-  # concat related with a text to be human readable
-  COMMIT_RELATED="> current branch: ${COMMIT_BRANCH}"
+  # if the flag BRANCH_AS_ISSUE_ID is active ...
+  if [[ ${BRANCH_AS_ISSUE_ID} = "1" ]]; then
+    # ... use the branch name as reference
+    READ_COMMIT_RELATED=${COMMIT_REFERENCE}
 
-  # read commit related info
-  read READ_COMMIT_RELATED
+  # else ask user the issue ID
+  else
+    yellow "# Related issue"
+    yellow "# [enter the ID of issue]"
+    _yellow "# [if empty will use the branch name as reference in commit] $ "
+
+    # concat related with a text to be human readable
+    COMMIT_RELATED="> current branch: ${COMMIT_BRANCH}"
+
+    # read commit related info
+    read READ_COMMIT_RELATED
+  fi
+
   # if commit related was entered...
   if [[ ${READ_COMMIT_RELATED} ]]; then
     # convert related to uppercase
@@ -249,7 +262,7 @@ function __commitPerform
   COMMIT_MESSAGE="[${COMMIT_REFERENCE}/${COMMIT_TYPE}] ${COMMIT_MESSAGE}"
   green "  ~> git commit -m '${COMMIT_MESSAGE}'"
 
-  git commit -F- <<EOF
+  git commit -q -F- <<EOF
 ${COMMIT_MESSAGE}
 ${COMMIT_RELATED}
 ${COMMIT_CHANGES}
@@ -259,10 +272,10 @@ EOF
   if [[ "$(git status --short)" ]]; then
     _yellow "# Do you want to commit again? [y/n] $ "
     read -n 1 READ_DO_AGAIN
+    echo ""
     if [[ ${READ_DO_AGAIN} = "y" ]]; then
       __commitPerform
     fi
-    echo ""
   fi
 }
 
@@ -324,13 +337,23 @@ function log
 # push the changes to remote repo
 function push
 {
+  DU_ORIGIN=${1}
+  if [[ ! ${DU_ORIGIN} ]]; then
+    DU_ORIGIN="origin"
+  fi
+  DU_BRANCH=$(echo $(basename ${COMMIT_BRANCH}) | tr a-z A-Z)
   git config credential.helper store
-  git push
+  git push ${DU_ORIGIN} ${DU_BRANCH}
 }
 
 # push the changes to remote repo
 function pull
 {
+  DU_ORIGIN=${1}
+  if [[ ! ${DU_ORIGIN} ]]; then
+    DU_ORIGIN="origin"
+  fi
+  DU_BRANCH=$(echo $(basename ${COMMIT_BRANCH}) | tr a-z A-Z)
   git config credential.helper store
-  git pull
+  git pull ${DU_ORIGIN} ${DU_BRANCH}
 }
