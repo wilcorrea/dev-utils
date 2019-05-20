@@ -20,6 +20,8 @@ After add the script in .bashrc make sure you created a new session in your term
 
 ### git.sh
 
+[![asciicast](https://asciinema.org/a/242553.svg)](https://asciinema.org/a/242553)
+
 #### status
 
 The status function will basically execute the `git status` with the parameter` --short`
